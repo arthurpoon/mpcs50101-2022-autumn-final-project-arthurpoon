@@ -34,7 +34,19 @@ class Task:
 
     def __init__(self, name, unique_id, priority=3, due_date = "-" ):
 
-        """initate task object with attributes"""
+        """initate task object with attributes
+        
+        Methods:
+        - add
+        - delete
+        - done
+        - sort_tasks
+        - pickle_tasks
+        - list
+        - report
+        - query
+
+        """
 
         self.created_date = timeformatting.get_time_in_CST()
         self.completed_date = "-"
@@ -52,6 +64,7 @@ class Task:
     #         pass
     #     else:
     #         print("Invalid Priority, please insert int 1, 2, or 3")
+
 
 class Tasks:
 
