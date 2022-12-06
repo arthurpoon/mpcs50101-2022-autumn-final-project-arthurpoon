@@ -9,7 +9,6 @@ __email__ = "arthur.poon@chicagobooth.edu
 """
 
 from tasks import Task, Tasks
-import dateparser
 import commandgetparse
 
 def main():
@@ -20,7 +19,7 @@ def main():
 
     #operations based on arguments
     if args.add:
-        Tasks_obj.add(args.add,args.priority,dateparser.parse(args.due))
+        Tasks_obj.add(args.add,args.priority,args.due)
 
     elif args.report:
         Tasks_obj.sort_tasks()

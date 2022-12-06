@@ -12,9 +12,8 @@ __email__ = "arthur.poon@chicagobooth.edu
 
 import pickle
 import itertools
-import argparse
 import tabulate
-
+import dateparser
 
 #importing custom modules
 import timeformatting
@@ -34,19 +33,7 @@ class Task:
 
     def __init__(self, name, unique_id, priority=3, due_date = "-" ):
 
-        """initate task object with attributes
-        
-        Methods:
-        - add
-        - delete
-        - done
-        - sort_tasks
-        - pickle_tasks
-        - list
-        - report
-        - query
-
-        """
+        """initate task object with attributes"""
 
         self.created_date = timeformatting.get_time_in_CST()
         self.completed_date = "-"
@@ -68,12 +55,25 @@ class Task:
 
 class Tasks:
 
-    """A list of `Task` objects."""
+    """A list of `Task` objects.
+
+        Methods:
+        - add
+        - delete
+        - done
+        - sort_tasks
+        - pickle_tasks
+        - list
+        - report
+        - query
+    """
 
     def __init__(self):
         """Read pickled tasks file into a list"""
+
         # List of Task objects
         self.tasks_list = [] 
+
         # your code here
         try:
             with open('.todo.pickle','rb') as f:
@@ -82,6 +82,7 @@ class Tasks:
             print("no existing file of tasks, creating new list")
             pass
 
+        #iterator count to generate unique ID
         if self.tasks_list == []:
             self.iterator = 0
         else:
@@ -89,6 +90,7 @@ class Tasks:
 
     def pickle_tasks(self):
         """Picle your task list to a file"""
+        
         with open('.todo.pickle', 'wb') as f:
             pickle.dump(self.tasks_list,f)
 
@@ -96,7 +98,9 @@ class Tasks:
     def list(self):
         print_list = []
         for task in self.tasks_list:
-            if task.completed_date == None:
+
+            # dash is default value because Nonetype would prevent sorting in report function later on
+            if task.completed_date == "-":
                 print_list.append([task.unique_id,str((timeformatting.get_time_in_CST()-task.created_date).days)+"d",task.due_date,task.priority,task.name])
 
         if len(print_list)==0:
@@ -129,7 +133,8 @@ class Tasks:
         print(f"searching for {query_terms}")
         print_list =[]
         for task in self.tasks_list:
-            if any(query_term.lower() in task.name.lower() for query_term in query_terms) and task.completed_date == None:
+            #default value of completed date is a dash, not Nonetype
+            if any(query_term.lower() in task.name.lower() for query_term in query_terms) and task.completed_date == "-":
                 print_list.append([task.unique_id,str((timeformatting.get_time_in_CST()-task.created_date).days)+"d",task.due_date,task.priority,task.name])
 
         if len(print_list)==0:
@@ -142,14 +147,21 @@ class Tasks:
 
         self.iterator += 1
 
-        #initiate new instance of Task Class depending on presence of date
-        if due_date == None:
-            new_task = Task(name,self.iterator,priority)    
-        else:
-            due_date = timeformatting.datetime_to_str(due_date)
-            new_task = Task(name,self.iterator,priority,due_date)    
+        #check if name is a string or an integer
+        if name.isnumeric():
+            print("There was an error in creating your task. Run 'todo -h' for usage instructions.")
+            exit()
 
+        #try to convert date if possible
+        try:
+            due_date = str(dateparser.parse(due_date))
+        except:
+            due_date = "-"
 
+        #initiate new instance of Task Class depending on presence of date, needed because of the way emtpy entries are handled by timeparser to not override defaults
+        new_task = Task(name,self.iterator,priority,due_date)    
+
+        #add new task to the list of tasks
         self.tasks_list.append(new_task)
         print(f"Created task {new_task.unique_id}")
 

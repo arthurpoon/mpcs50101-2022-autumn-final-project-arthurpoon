@@ -14,7 +14,7 @@ def get_and_parse_command_line_inputs():
 
     parser = argparse.ArgumentParser(description='Update your ToDo List.')
 
-    parser.add_argument('--add', type=str, required = False, help='a task string to add to your list')
+    parser.add_argument('--add', required = False, help='a task string to add to your list')
     parser.add_argument('--due', type=str, required = False, help='due date, ideally in mm/dd/yyyy format')
     parser.add_argument('--priority', type=int, required = False, default = 3, help='priority of a task; default value is 3')
     
